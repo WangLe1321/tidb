@@ -7,6 +7,8 @@ import (
 	"strings"
 	"time"
 
+	"github.com/pingcap/tidb/util/collate"
+
 	"github.com/opentracing/opentracing-go"
 	"github.com/pingcap/errors"
 	"github.com/pingcap/failpoint"
@@ -457,6 +459,13 @@ func CheckNewCollationEnable(
 			"the config 'new_collations_enabled_on_first_bootstrap' not match, upstream:%v, downstream: %v",
 			backupNewCollationEnable, newCollationEnable)
 	}
+
+	enabled := false
+	if newCollationEnable == "True" {
+		enabled = true
+	}
+	collate.SetNewCollationEnabledForTest(enabled)
+	log.Info("set new_collation_enabled", zap.Bool("new_collation_enabled", enabled))
 	return nil
 }
 
